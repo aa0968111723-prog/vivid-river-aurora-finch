@@ -1,0 +1,366 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-canvas: #f3eee4;
+  --color-paper: #faf6ee;
+  --color-raised: #fffdf8;
+  --color-ink: #2a2723;
+  --color-mist: #6a645c;
+  --color-line: #e4dcd0;
+  --color-leaf: #2f7a5b;
+  --color-leaf-fg: #f4fbf7;
+  --color-sky: #4a90b8;
+  --color-coral: #d46a52;
+  --color-coral-fg: #fff8f5;
+  --color-sun: #d7a82e;
+  --color-success: #2f7a5b;
+  --color-warning: #b8860b;
+  --color-danger: #c45c4a;
+  --color-chip-open: #e7f3ec;
+  --color-chip-fill: #f8ecd4;
+  --color-chip-end: #ece8e2;
+  --color-night: #15202b;
+
+  --font-sans: "Noto Sans TC", "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Figtree", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-soft: 0 18px 40px rgb(42 39 35 / 0.08);
+  --shadow-lift: 0 8px 24px rgb(42 39 35 / 0.06);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-quick: 150ms;
+  --motion-fast: 250ms;
+  --motion-slow: 400ms;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-leaf);
+    outline-offset: 3px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes turtle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.turtle-float {
+  animation: turtle-float 4.5s var(--ease-out) infinite;
+}
+
+@keyframes zen-breath {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+@keyframes zen-line-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.zen-track {
+  height: 420vh;
+  margin-top: -3.5rem;
+}
+
+.zen-stage {
+  --dawn: 0;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-night);
+}
+
+.zen-sky,
+.zen-stars,
+.zen-moon,
+.zen-sun,
+.zen-bloom,
+.zen-hill,
+.zen-meter {
+  position: absolute;
+  pointer-events: none;
+}
+
+.zen-sky {
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-night) calc((1 - var(--dawn)) * 100%), #d5e8f4) 0%,
+    color-mix(in oklab, #1c2b34 calc((1 - var(--dawn)) * 100%), #f6e6c8) 46%,
+    color-mix(in oklab, #142018 calc((1 - var(--dawn)) * 100%), var(--color-canvas)) 100%
+  );
+}
+
+.zen-stars {
+  inset: 0;
+  background:
+    radial-gradient(1.4px 1.4px at 12% 16%, white 60%, transparent 70%),
+    radial-gradient(1.2px 1.2px at 24% 28%, white 60%, transparent 70%),
+    radial-gradient(1px 1px at 38% 12%, white 60%, transparent 70%),
+    radial-gradient(1.6px 1.6px at 52% 22%, white 60%, transparent 70%),
+    radial-gradient(1px 1px at 66% 10%, white 60%, transparent 70%),
+    radial-gradient(1.3px 1.3px at 78% 24%, white 60%, transparent 70%),
+    radial-gradient(1px 1px at 88% 14%, white 60%, transparent 70%),
+    radial-gradient(1.2px 1.2px at 18% 38%, white 60%, transparent 70%),
+    radial-gradient(1px 1px at 82% 36%, white 60%, transparent 70%),
+    radial-gradient(1.5px 1.5px at 44% 8%, white 60%, transparent 70%);
+  opacity: clamp(0, calc(1.05 - var(--dawn) * 1.45), 1);
+}
+
+.zen-moon {
+  top: 11%;
+  right: 14%;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, #fff, #e4edf2 62%);
+  box-shadow: 0 0 70px 16px rgb(226 234 244 / 0.35);
+  opacity: clamp(0, calc(1 - var(--dawn) * 2.8), 1);
+}
+
+.zen-sun {
+  left: 50%;
+  width: min(78vw, 28rem);
+  height: min(78vw, 28rem);
+  border-radius: 999px;
+  background: radial-gradient(circle, #fff8e4 0%, #f3c56a 30%, rgb(243 197 106 / 0) 68%);
+  top: calc(52% - var(--dawn) * 36%);
+  transform: translateX(-50%);
+  opacity: calc(0.08 + var(--dawn) * 0.95);
+}
+
+.zen-bloom {
+  left: 50%;
+  top: 36%;
+  width: 130%;
+  height: 70%;
+  transform: translate(-50%, -30%);
+  background: radial-gradient(ellipse, rgb(255 214 140 / calc(var(--dawn) * 0.45)) 0%, transparent 62%);
+}
+
+.zen-hill {
+  left: 50%;
+  bottom: -36%;
+  width: 150%;
+  height: 62%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: color-mix(in oklab, #101c16 calc((1 - var(--dawn)) * 100%), #e4efd4);
+}
+
+.zen-hill-back {
+  bottom: -22%;
+  width: 120%;
+  height: 50%;
+  background: color-mix(in oklab, #1b3026 calc((1 - var(--dawn)) * 100%), #d3e3c0);
+}
+
+.zen-meter {
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: calc(var(--dawn) * 100%);
+  background: var(--color-sun);
+}
+
+.zen-figure {
+  position: relative;
+  width: min(78vw, 400px);
+  height: min(46vh, 460px);
+  margin-bottom: 0.25rem;
+  filter: brightness(calc(0.8 + var(--dawn) * 0.26));
+  animation: zen-breath 6.5s ease-in-out infinite;
+}
+
+.zen-still,
+.zen-awake {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  user-select: none;
+}
+
+.zen-awake {
+  opacity: clamp(0, calc((var(--dawn) - 0.12) / 0.2), 1);
+}
+
+.zen-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 1%;
+  width: 42%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgb(18 28 20 / calc(0.22 + var(--dawn) * 0.18));
+  filter: blur(8px);
+}
+
+.zen-card {
+  width: min(100%, 36rem);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--color-raised) 92%, transparent);
+  padding: 1rem 1.15rem 1.1rem;
+  text-align: center;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lift);
+}
+
+.zen-line {
+  animation: zen-line-in 420ms var(--ease-out);
+}
+
+.zen-skip {
+  position: absolute;
+  top: 4.75rem;
+  right: 1rem;
+  z-index: 2;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-raised) 88%, transparent);
+  padding-inline: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lift);
+  opacity: clamp(0, calc(1.15 - var(--dawn) * 1.35), 1);
+}
+
+.zen-chevron {
+  display: flex;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.35rem;
+  color: color-mix(in oklab, var(--color-raised) calc((1 - var(--dawn)) * 100%), var(--color-mist));
+  opacity: clamp(0, calc(1 - var(--dawn) * 3.4), 1);
+  animation: zen-breath 2.4s ease-in-out infinite;
+}
+
+.zen-header {
+  color: color-mix(
+    in oklab,
+    var(--color-raised) calc((1 - clamp(0, (var(--dawn, 0) - 0.3) / 0.28, 1)) * 100%),
+    var(--color-ink)
+  );
+  text-shadow: 0 1px 10px rgb(8 12 16 / calc((1 - var(--dawn, 0)) * 0.45));
+}
+
+.zen-header a {
+  color: inherit;
+}
+
+@media (min-width: 768px) {
+  .zen-track {
+    margin-top: -4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .turtle-float,
+  .reveal,
+  .zen-figure,
+  .zen-chevron,
+  .zen-line {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .zen-track {
+    height: auto;
+  }
+
+  .zen-stage {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 100dvh;
+    --dawn: 1;
+  }
+
+  .zen-figure {
+    filter: none;
+  }
+
+  .zen-skip,
+  .zen-chevron,
+  .zen-meter {
+    display: none;
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "淡江大學禪學社｜TKU Zen Club",
+      "hasCanvas": false,
+      "bodyTextLen": 1077,
+      "bodyTextHash": "e5ff9ae4ac391cc639d85abb84ac43aa94ac16ea5bab4e7eb04a51b9d8aba39a",
+      "bodyTextPrefix": "跳到主要內容 淡江禪學社 活動 第一次來 認識我們 加入我們 跳過介紹 龜龜 先坐一下。 往下滑，天會慢慢亮。 最近有什麼活動？",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "淡江大學禪學社｜TKU Zen Club",
+      "hasCanvas": false,
+      "bodyTextLen": 1075,
+      "bodyTextHash": "3b32090e4693c08781d1e6f7fb39eba24ab3c85b3b42c0b8bb1030287cc54b95",
+      "bodyTextPrefix": "跳到主要內容 淡江禪學社 跳過介紹 龜龜 先坐一下。 往下滑，天會慢慢亮。 最近有什麼活動？ 想參加，選一場就好 報名中 期初演",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
