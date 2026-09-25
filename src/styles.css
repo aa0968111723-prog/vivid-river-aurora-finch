@@ -111,7 +111,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(7px);
+    transform: translateY(3px);
   }
 }
 
@@ -127,15 +127,33 @@
 }
 
 .zen-track {
-  height: 420vh;
+  height: 220vh;
   margin-top: -3.5rem;
+}
+
+html[data-zen-skip="1"] .zen-track {
+  height: 0;
+  margin: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+html[data-zen-skip="1"] header.zen-header {
+  color: var(--color-ink);
+  text-shadow: none;
+  background: color-mix(in oklab, var(--color-canvas) 92%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--color-line) 70%, transparent);
+}
+
+html[data-zen-skip="1"] [aria-label="底部"] {
+  translate: none !important;
 }
 
 .zen-stage {
   --dawn: 0;
   position: sticky;
   top: 0;
-  height: 100dvh;
+  height: 100svh;
   overflow: hidden;
   background: var(--color-night);
 }
@@ -235,8 +253,8 @@
 
 .zen-figure {
   position: relative;
-  width: min(78vw, 400px);
-  height: min(46vh, 460px);
+  width: min(58vw, 280px);
+  height: min(30svh, 280px);
   margin-bottom: 0.25rem;
   filter: brightness(calc(0.8 + var(--dawn) * 0.26));
   animation: zen-breath 6.5s ease-in-out infinite;
@@ -254,7 +272,7 @@
 }
 
 .zen-awake {
-  opacity: clamp(0, calc((var(--dawn) - 0.12) / 0.2), 1);
+  opacity: clamp(0, calc((var(--dawn) - 0.08) / 0.14), 1);
 }
 
 .zen-shadow {
@@ -279,35 +297,64 @@
   box-shadow: var(--shadow-lift);
 }
 
+.zen-copy {
+  display: grid;
+  min-height: 4.6rem;
+}
+
 .zen-line {
-  animation: zen-line-in 420ms var(--ease-out);
+  grid-area: 1 / 1;
+  margin: 0;
+  white-space: pre-line;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.35;
+  opacity: 0;
+  transition: opacity 340ms var(--ease-out);
+}
+
+.zen-line.is-on {
+  opacity: 1;
+}
+
+.zen-cta {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms var(--ease-out);
+}
+
+.zen-cta.is-on {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .zen-skip {
   position: absolute;
-  top: 4.75rem;
+  top: calc(4.5rem + env(safe-area-inset-top));
   right: 1rem;
   z-index: 2;
   min-height: 2.75rem;
   border-radius: 999px;
-  background: color-mix(in oklab, var(--color-raised) 88%, transparent);
+  background: color-mix(in oklab, var(--color-raised) 92%, transparent);
   padding-inline: 1rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-ink);
   box-shadow: var(--shadow-lift);
-  opacity: clamp(0, calc(1.15 - var(--dawn) * 1.35), 1);
 }
 
 .zen-chevron {
   display: flex;
-  height: 1.75rem;
+  min-height: 2.75rem;
   align-items: center;
   justify-content: center;
+  gap: 0.25rem;
   margin-top: 0.35rem;
+  border: 0;
+  background: transparent;
   color: color-mix(in oklab, var(--color-raised) calc((1 - var(--dawn)) * 100%), var(--color-mist));
-  opacity: clamp(0, calc(1 - var(--dawn) * 3.4), 1);
-  animation: zen-breath 2.4s ease-in-out infinite;
+  font-size: 0.8125rem;
 }
 
 .zen-header {
@@ -323,15 +370,30 @@
   color: inherit;
 }
 
+@media (max-width: 767px) {
+  .zen-track {
+    height: 190vh;
+  }
+
+  .zen-line {
+    font-size: 1.35rem;
+  }
+}
+
 @media (min-width: 768px) {
   .zen-track {
     margin-top: -4rem;
+  }
+
+  .zen-line {
+    font-size: 1.875rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+    --dawn: 1;
   }
   .turtle-float,
   .reveal,
@@ -350,7 +412,7 @@
     position: relative;
     top: auto;
     height: auto;
-    min-height: 100dvh;
+    min-height: 100svh;
     --dawn: 1;
   }
 

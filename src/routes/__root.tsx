@@ -10,12 +10,14 @@ import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/layout/site-shell";
 import { NotFoundPage } from "@/components/not-found";
 import { SITE } from "@/lib/site";
+import { getPublicLayout } from "@/lib/server/public";
 import appCss from "../styles.css?url";
 
 const FONT =
   "https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap";
 
 export const Route = createRootRoute({
+  loader: () => getPublicLayout(),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -43,17 +45,24 @@ export const Route = createRootRoute({
 
 function RootDocument() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const layout = Route.useLoaderData();
   const bare = pathname.startsWith("/admin") || pathname.startsWith("/login");
   return (
     <html lang="zh-Hant-TW" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var q=location.search.indexOf('zen=1')>=0;if(!q&&sessionStorage.getItem('tku-zen-seen')==='1')document.documentElement.dataset.zenSkip='1'}catch(e){}",
+          }}
+        />
         <HeadContent />
       </head>
       <body>
         <PreviewHostBridge />
         <AuthProvider>
           {bare ? <Outlet /> : (
-            <SiteShell>
+            <SiteShell layout={layout}>
               <Outlet />
             </SiteShell>
           )}

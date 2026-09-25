@@ -9,6 +9,7 @@ const LINKS = [
   { to: "/admin/events", label: "活動" },
   { to: "/admin/content", label: "內容" },
   { to: "/admin/assets", label: "圖片" },
+  { to: "/admin/layout", label: "排版" },
   { to: "/admin/settings", label: "設定" },
 ];
 

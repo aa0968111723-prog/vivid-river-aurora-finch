@@ -143,7 +143,7 @@ export function mapStory(row: {
     body: row.body,
     displayName: row.display_name,
     roleLabel: row.role_label,
-    photoUrl: row.photo_url,
+    photoUrl: row.photo_url && !row.photo_url.includes("/images/story-") ? row.photo_url : null,
     joinedLabel: row.joined_label,
     relatedEventId: row.related_event_id,
     instagramUrl: row.instagram_url,
@@ -179,7 +179,8 @@ export function mapIg(row: {
   return {
     id: row.id,
     postUrl: row.post_url,
-    thumbnailUrl: row.thumbnail_url,
+    thumbnailUrl:
+      row.thumbnail_url && !row.thumbnail_url.startsWith("/images/") ? row.thumbnail_url : null,
     caption: row.caption,
     postType: row.post_type,
     publishedOn: asIsoOrNull(row.published_on),

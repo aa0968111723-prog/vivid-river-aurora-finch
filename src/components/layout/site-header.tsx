@@ -1,7 +1,7 @@
 import { Instagram } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Logo } from "@/components/brand/logo";
-import { useZenChrome } from "@/components/home/zen-intro";
+import { replayZen, useZenChrome } from "@/components/home/zen-intro";
 import { NAV, SITE, withUtm } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ function isActive(pathname: string, to: string, match: "exact" | "prefix") {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
-export function SiteHeader() {
+export function SiteHeader({ showReplay = false }: { showReplay?: boolean }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const inIntro = useZenChrome();
   return (
@@ -50,6 +50,17 @@ export function SiteHeader() {
             <Instagram className="size-4" />
           </a>
         </nav>
+        {showReplay && !inIntro ? (
+          <button
+            type="button"
+            onClick={replayZen}
+            className="min-h-11 rounded-full px-3 text-sm text-mist hover:text-ink"
+          >
+            再看一次龜龜
+          </button>
+        ) : (
+          <span className="md:hidden" />
+        )}
       </div>
     </header>
   );

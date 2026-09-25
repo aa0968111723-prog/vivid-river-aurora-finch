@@ -23,7 +23,7 @@ export const Route = createFileRoute("/events/")({
   head: () => ({
     meta: [
       { title: `活動｜${SITE.name}` },
-      { name: "description", content: "茶會、社課、禪修體驗、期初演講。第一次來也沒關係。" },
+      {name: "description", content: "看已結束的回顧，或追 IG @tku_zc 等下一場。"},
     ],
   }),
 });
@@ -49,7 +49,7 @@ export function EventsPage() {
     <main className="mx-auto max-w-6xl px-5 py-10 md:px-6 md:py-16">
       <p className="text-sm font-medium tracking-wide text-leaf">活動</p>
       <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">最近想去哪一場？</h1>
-      <p className="mt-3 max-w-xl text-mist">一個人來完全 OK。選一場、到現場就好。</p>
+      <p className="mt-3 max-w-xl text-mist">一個人來可以。時間與教室以當週 IG 為準。</p>
       <div className="mt-6 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
         {CATS.map((id) => (
           <Chip key={id} active={cat === id} onClick={() => setCat(id)}>
@@ -64,27 +64,37 @@ export function EventsPage() {
           </Chip>
         ))}
       </div>
-      {upcoming.length ? (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {upcoming.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
-      ) : (
+      {events.length === 0 ? (
         <p className="mt-8 rounded-xl border border-line bg-paper p-6 text-mist">
-          這個篩選目前沒有場次。換一個分類，或去 IG 看最新的。
+          最近的場次還在排，先追 IG {SITE.instagramHandle}。
         </p>
+      ) : (
+        <>
+          {upcoming.length ? (
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {upcoming.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-8 rounded-xl border border-line bg-paper p-6 text-mist">
+              {status === "all" && cat === "all"
+                ? `最近的場次還在排，先追 IG ${SITE.instagramHandle}。`
+                : "這個篩選目前沒有即將舉行的場次。"}
+            </p>
+          )}
+          {past.length ? (
+            <div className="mt-14">
+              <h2 className="font-display text-2xl font-semibold tracking-tight">已經辦過的</h2>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {past.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </>
       )}
-      {status === "all" && past.length ? (
-        <div className="mt-14">
-          <h2 className="font-display text-2xl font-semibold tracking-tight">已經辦過的</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {past.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        </div>
-      ) : null}
     </main>
   );
 }

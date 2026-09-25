@@ -25,7 +25,7 @@ src/routes          前台頁面 + /admin 後台
 src/components      UI、首頁區塊、活動卡
 src/lib/server      公開讀取 / 後台寫入
 src/lib/integrations  Instagram / Canva / Drive adapter
-migrations          schema + demo seed（is_demo = true）
+migrations          schema。0003 是會被 0004 清掉的 demo；上線內容以真實資料為準
 ```
 
 公開內容沒有 `user_id`（世界可讀）。後台變更走登入 + Admin / Editor / Viewer。
@@ -42,6 +42,7 @@ migrations          schema + demo seed（is_demo = true）
 | `/stories` | 社員故事 |
 | `/gallery` | 活動回顧 |
 | `/join` | 加入我們 |
+| `/admin/layout` | 首頁區塊、開場、固定頁文案 |
 | `/admin` | 後台 |
 | `/login` | 後台登入 |
 
@@ -71,15 +72,40 @@ migrations          schema + demo seed（is_demo = true）
 
 `migrations/0001_auth.sql` Better Auth  
 `migrations/0002_schema.sql` 活動、故事、FAQ、IG、素材、設定、分析  
-`migrations/0003_seed.sql` 少量 demo（`is_demo = true`，可刪）
+`migrations/0003_seed.sql` 開發用 demo（`is_demo = true`）  
+`migrations/0004_real_content.sql` 清掉 demo，只留下已核對的 FAQ、兩則 IG、三場已結束回顧
 
-Demo 活動含：浮游禪光、期初演講、週三社課、覺軒花園散步、禪修體驗。
+前台查詢一律 `is_demo = false`。沒有活動、故事或 IG 時顯示空狀態，不補假卡、假人名、假名額。
+
+可以放上網站的活動只有這三場，而且都已結束、不開放報名：
+
+- 2026-03-04 教授沒教的大腦休息法／工學大樓 E310
+- 2026-03-11 靜定，跳出內耗黑洞／工學大樓 E310
+- 2026-03-18 領袖禪-專注的力量／宮燈 H117
+
+IG 只收這兩則：<https://www.instagram.com/p/DVGrfkAk02g/>、<https://www.instagram.com/p/DV5AccUEaW-/>
+
+## 幹部上線後要補
+
+- 本學期已確認的活動（日期、教室、報名連結）
+- 真實活動照片（不要把生成圖當成現場照）
+- 本人同意公開的社員故事
+- 社費金額（確認前不要寫）
 
 ## Admin
 
 第一位登入的人會成為 admin。之後的人預設 viewer，需由管理者調整 `profiles.role`。
 
 後台可：新增/編輯活動、報名網址、狀態、封面、IG 精選、故事、FAQ、素材網址、公告。
+
+`/admin/layout`（editor / admin 可存，viewer 只能看）：
+
+- 首頁區塊排序、顯示或隱藏、標題與副標
+- 龜龜開場：開啟／預設跳過／關閉、六句台詞、要不要顯示龜龜
+- Hero 主標、副標、兩顆按鈕、背景圖
+- 認識我們、第一次來、加入我們、Footer 文案
+
+沒有存過排版時，網站用程式裡的預設文案。改完會立刻出現在前台。
 
 ## Instagram / Canva / Google Drive
 

@@ -1,0 +1,41 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "淡江大學禪學社｜TKU Zen Club",
+      "hasCanvas": false,
+      "bodyTextLen": 935,
+      "bodyTextHash": "d2aa9246733a2a1ab8c4598b70fc1525ecf94dcca082938389ced4f7baee3f41",
+      "bodyTextPrefix": "跳到主要內容 淡江禪學社 活動 第一次來 認識我們 加入我們 跳過介紹 龜龜 先坐一下。 嗨，我是龜龜。 我們是淡江大學禪學社。",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/zen-layout-check.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "淡江大學禪學社｜TKU Zen Club",
+      "hasCanvas": false,
+      "bodyTextLen": 931,
+      "bodyTextHash": "e108d4b6dceb09523de1f3c4f415b6c8df95d5f784f4439845985d1ff7d2982f",
+      "bodyTextPrefix": "跳到主要內容 淡江禪學社 跳過介紹 龜龜 先坐一下。 嗨，我是龜龜。 我們是淡江大學禪學社。 不是寺廟，也不用先變成什麼樣的人。",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/zen-layout-check-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/zen-layout-check.json",
+  "divergesFromBaseline": true,
+  "baselineReasons": [
+    "desktop: body text changed (1077 -> 935 chars, hash mismatch)",
+    "mobile: body text changed (1075 -> 931 chars, hash mismatch)"
+  ]
+}

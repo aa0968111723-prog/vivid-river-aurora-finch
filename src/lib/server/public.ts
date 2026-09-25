@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import type { Announcement, SiteClubSettings } from "@/lib/types";
+import { mergeLayout, type SiteLayout } from "@/lib/site-layout";
 import {
   mapAsset,
   mapEvent,
@@ -29,7 +30,7 @@ export const getPublishedEvents = createServerFn({ method: "GET" }).handler(
       `select ${EVENT_SELECT}
        from events e
        join event_categories c on c.id = e.category_id
-       where e.status = 'published' and e.deleted_at is null
+       where e.status = 'published' and e.deleted_at is null and e.is_demo = false
        order by e.starts_at asc`,
     );
     return rows.map(mapEvent);
@@ -45,7 +46,7 @@ export const getEventBySlug = createServerFn({ method: "GET" })
       `select ${EVENT_SELECT}
        from events e
        join event_categories c on c.id = e.category_id
-       where e.slug = $1 and e.status = 'published' and e.deleted_at is null
+       where e.slug = $1 and e.status = 'published' and e.deleted_at is null and e.is_demo = false
        limit 1`,
       [data.slug],
     );
@@ -68,7 +69,7 @@ export const getEventBySlug = createServerFn({ method: "GET" })
       `select ${EVENT_SELECT}
        from events e
        join event_categories c on c.id = e.category_id
-       where e.status = 'published' and e.deleted_at is null
+       where e.status = 'published' and e.deleted_at is null and e.is_demo = false
          and e.id <> $1
          and (e.category_id = $2 or e.starts_at > now())
        order by e.starts_at asc
@@ -102,7 +103,7 @@ export const getPublishedStories = createServerFn({ method: "GET" }).handler(
       `select id, slug, quote, body, display_name, role_label, photo_url,
               joined_label, related_event_id, instagram_url, is_demo
        from stories
-       where status = 'published' and deleted_at is null and consent = true
+       where status = 'published' and deleted_at is null and consent = true and is_demo = false
        order by sort_order asc`,
     );
     return rows.map(mapStory);
@@ -130,7 +131,7 @@ export const getStoryBySlug = createServerFn({ method: "GET" })
       `select id, slug, quote, body, display_name, role_label, photo_url,
               joined_label, related_event_id, instagram_url, is_demo
        from stories
-       where slug = $1 and status = 'published' and deleted_at is null and consent = true
+       where slug = $1 and status = 'published' and deleted_at is null and consent = true and is_demo = false
        limit 1`,
       [data.slug],
     );
@@ -173,6 +174,7 @@ export const getFeaturedInstagram = createServerFn({ method: "GET" }).handler(
                 published_on::text as published_on, featured
          from instagram_posts
          where featured = true
+           and post_url like 'https://www.instagram.com/p/%'
          order by sort_order asc
          limit 8`,
       );
@@ -182,6 +184,28 @@ export const getFeaturedInstagram = createServerFn({ method: "GET" }).handler(
     }
   },
 );
+
+export const getPublicLayout = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const { getSql } = await import("@/lib/db");
+    const sql = await getSql();
+    const rows = await sql.query<{ value: unknown }>(
+      `select value from site_settings where key = 'layout' limit 1`,
+    );
+    let raw: unknown = rows[0]?.value ?? null;
+    if (typeof raw === "string") {
+      try {
+        raw = JSON.parse(raw);
+      } catch {
+        raw = null;
+      }
+    }
+    const layout: SiteLayout = mergeLayout(raw);
+    return layout;
+  } catch {
+    return mergeLayout(null);
+  }
+});
 
 export const getSiteMeta = createServerFn({ method: "GET" }).handler(async () => {
   const { getSql } = await import("@/lib/db");
@@ -209,17 +233,18 @@ export const getSiteMeta = createServerFn({ method: "GET" }).handler(async () =>
 });
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const [events, stories, faq, ig, meta] = await Promise.all([
+  const [events, stories, faq, ig, meta, layout] = await Promise.all([
     getPublishedEvents(),
     getPublishedStories(),
     getPublishedFaq(),
     getFeaturedInstagram(),
     getSiteMeta(),
+    getPublicLayout(),
   ]);
   const now = Date.now();
   const upcoming = events.filter((e) => Date.parse(e.endsAt) >= now).slice(0, 6);
   const past = events.filter((e) => Date.parse(e.endsAt) < now).slice(-6).reverse();
-  return { events, upcoming, past, stories, faq, ig, meta };
+  return { events, upcoming, past, stories, faq, ig, meta, layout };
 });
 
 export const getGalleryData = createServerFn({ method: "GET" }).handler(
@@ -255,7 +280,7 @@ export const getGalleryData = createServerFn({ method: "GET" }).handler(
               e.title as event_title, e.slug as event_slug
        from event_assets a
        join events e on e.id = a.event_id
-       where e.status = 'published' and e.deleted_at is null
+       where e.status = 'published' and e.deleted_at is null and e.is_demo = false
        order by e.starts_at desc, a.sort_order asc`,
     );
     const events = await getPublishedEvents();

@@ -23,6 +23,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAssetsRouteImport } from './routes/admin/assets'
 import { Route as AdminContentRouteImport } from './routes/admin/content'
 import { Route as AdminEventsRouteImport } from './routes/admin/events'
+import { Route as AdminLayoutRouteImport } from './routes/admin/layout'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
@@ -101,6 +102,11 @@ const AdminEventsRoute = AdminEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLayoutRoute = AdminLayoutRouteImport.update({
+  id: '/layout',
+  path: '/layout',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/admin/assets': typeof AdminAssetsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/layout': typeof AdminLayoutRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/events/$slug': typeof EventsSlugRoute
   '/stories/$slug': typeof StoriesSlugRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/admin/assets': typeof AdminAssetsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/layout': typeof AdminLayoutRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/events/$slug': typeof EventsSlugRoute
   '/stories/$slug': typeof StoriesSlugRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/admin/assets': typeof AdminAssetsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/layout': typeof AdminLayoutRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/events/$slug': typeof EventsSlugRoute
   '/stories/$slug': typeof StoriesSlugRoute
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/admin/assets'
     | '/admin/content'
     | '/admin/events'
+    | '/admin/layout'
     | '/admin/settings'
     | '/events/$slug'
     | '/stories/$slug'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/admin/assets'
     | '/admin/content'
     | '/admin/events'
+    | '/admin/layout'
     | '/admin/settings'
     | '/events/$slug'
     | '/stories/$slug'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/admin/assets'
     | '/admin/content'
     | '/admin/events'
+    | '/admin/layout'
     | '/admin/settings'
     | '/events/$slug'
     | '/stories/$slug'
@@ -387,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/layout': {
+      id: '/admin/layout'
+      path: '/layout'
+      fullPath: '/admin/layout'
+      preLoaderRoute: typeof AdminLayoutRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -443,6 +462,7 @@ interface AdminRouteChildren {
   AdminAssetsRoute: typeof AdminAssetsRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminEventsRoute: typeof AdminEventsRoute
+  AdminLayoutRoute: typeof AdminLayoutRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminEventIdRoute: typeof AdminEventIdRoute
@@ -452,6 +472,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAssetsRoute: AdminAssetsRoute,
   AdminContentRoute: AdminContentRoute,
   AdminEventsRoute: AdminEventsRoute,
+  AdminLayoutRoute: AdminLayoutRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminEventIdRoute: AdminEventIdRoute,

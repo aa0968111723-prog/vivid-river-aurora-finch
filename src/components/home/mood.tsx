@@ -1,13 +1,21 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { EventCard } from "@/components/events/event-card";
-import { MOODS } from "@/lib/site";
+import { MOODS, SITE } from "@/lib/site";
 import { track } from "@/lib/analytics";
 import type { EventRecord } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-export function MoodPicker({ events }: { events: EventRecord[] }) {
+export function MoodPicker({
+  events,
+  title = "最近的你，是哪一種狀態？",
+  subtitle = "第一次認識禪學社",
+}: {
+  events: EventRecord[];
+  title?: string;
+  subtitle?: string;
+}) {
   const [mood, setMood] = useState<string | null>(null);
   const selected = MOODS.find((m) => m.id === mood);
   const recs = useMemo(() => {
@@ -26,9 +34,9 @@ export function MoodPicker({ events }: { events: EventRecord[] }) {
   return (
     <section className="bg-paper py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-5 md:px-6">
-        <p className="text-sm font-medium tracking-wide text-leaf">第一次認識禪學社</p>
+        <p className="text-sm font-medium tracking-wide text-leaf">{subtitle}</p>
         <h2 className="mt-2 max-w-lg font-display text-3xl font-semibold tracking-tight md:text-4xl">
-          最近的你，是哪一種狀態？
+          {title}
         </h2>
         <p className="mt-3 max-w-lg text-mist">
           不是測驗，也不是診斷。選一個最接近的，我們帶你去看看適合的活動。
@@ -64,7 +72,13 @@ export function MoodPicker({ events }: { events: EventRecord[] }) {
               </div>
             ) : (
               <div className="mt-6 rounded-xl border border-line bg-raised p-6">
-                <p className="text-mist">這一兩週還沒有完全對上的場次。可以先去第一次來專區看看。</p>
+                <p className="text-mist">
+                  最近的場次還在排，先追{" "}
+                  <a href={SITE.instagramUrl} className="text-leaf" target="_blank" rel="noreferrer">
+                    IG {SITE.instagramHandle}
+                  </a>
+                  。
+                </p>
                 <Button asChild className="mt-4" variant="outline">
                   <Link to="/first-time">第一次來專區</Link>
                 </Button>

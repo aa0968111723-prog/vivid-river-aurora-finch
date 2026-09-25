@@ -9,7 +9,7 @@ export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
       { title: `活動回顧｜${SITE.name}` },
-      { name: "description", content: "茶會、花園、社課現場。不是相簿清單，是走過去的感覺。" },
+      { name: "description", content: "已結束的活動。真實照片還在整理。" },
     ],
   }),
 });
@@ -19,8 +19,12 @@ function GalleryPage() {
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 md:px-6 md:py-16">
       <p className="text-sm font-medium tracking-wide text-leaf">活動回顧</p>
-      <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">那幾天的光</h1>
-      <p className="mt-3 max-w-xl text-mist">照片來自社團活動。想參加下一場，從活動頁開始。</p>
+      <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">活動回顧</h1>
+      <p className="mt-3 max-w-xl text-mist">
+        {eventAssets.length
+          ? "下面是已核對過的活動。照片不會用生成圖充數。"
+          : "真實活動照片還在整理。可以先看已經結束的場次，或追 IG。"}
+      </p>
       <div className="mt-10 columns-2 gap-3 md:columns-3">
         {eventAssets.map((a) => (
           <Link

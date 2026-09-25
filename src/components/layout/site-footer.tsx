@@ -1,16 +1,27 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/brand/logo";
+import { replayZen } from "@/components/home/zen-intro";
+import { DEFAULT_LAYOUT } from "@/lib/site-layout";
 import { SITE, withUtm } from "@/lib/site";
 
-export function SiteFooter() {
+export function SiteFooter({
+  note = DEFAULT_LAYOUT.pages.footer.note,
+  showReplay = true,
+}: {
+  note?: string;
+  showReplay?: boolean;
+}) {
   return (
     <footer className="border-t border-line bg-paper">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-4 md:px-6">
         <div className="md:col-span-2">
           <Logo />
-          <p className="mt-3 max-w-sm text-sm text-mist">
-            一群淡江學生，練習把生活放慢一點。不是寺廟，也不是功課。
-          </p>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-mist">{note}</p>
+          {showReplay ? (
+            <button type="button" onClick={replayZen} className="mt-4 min-h-11 text-sm text-leaf">
+              再看一次龜龜
+            </button>
+          ) : null}
         </div>
         <div>
           <p className="text-sm font-medium">逛逛</p>
@@ -31,8 +42,8 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/gallery" className="text-mist no-underline hover:text-ink">
-                活動回顧
+              <Link to="/about" className="text-mist no-underline hover:text-ink">
+                認識我們
               </Link>
             </li>
           </ul>
@@ -50,7 +61,13 @@ export function SiteFooter() {
                 Instagram {SITE.instagramHandle}
               </a>
             </li>
+            <li>
+              <a href={SITE.facebookUrl} className="no-underline hover:text-ink" target="_blank" rel="noreferrer">
+                Facebook
+              </a>
+            </li>
             <li>{SITE.campus}</li>
+            <li>社辦：體育館 SG109</li>
             <li>
               <Link to="/login" className="text-mist/80 no-underline hover:text-ink">
                 社員後台

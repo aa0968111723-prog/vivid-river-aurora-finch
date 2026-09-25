@@ -34,11 +34,6 @@ export function HomeHero() {
           </Button>
         </div>
       </div>
-      <img
-        src="/images/turtle.jpg"
-        alt=""
-        className="turtle-float pointer-events-none absolute bottom-20 right-3 size-24 rounded-full object-cover shadow-soft ring-4 ring-canvas/80 md:bottom-10 md:right-8 md:size-36"
-      />
     </section>
   );
 }

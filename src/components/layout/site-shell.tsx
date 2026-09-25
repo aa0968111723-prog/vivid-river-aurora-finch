@@ -2,8 +2,16 @@ import type { ReactNode } from "react";
 import { BottomNav } from "./bottom-nav";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
+import type { SiteLayout } from "@/lib/site-layout";
 
-export function SiteShell({ children }: { children: ReactNode }) {
+export function SiteShell({
+  children,
+  layout,
+}: {
+  children: ReactNode;
+  layout?: SiteLayout;
+}) {
+  const showReplay = layout ? layout.intro.mode !== "off" : true;
   return (
     <div className="min-h-dvh bg-canvas text-ink">
       <a
@@ -12,11 +20,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
       >
         跳到主要內容
       </a>
-      <SiteHeader />
+      <SiteHeader showReplay={showReplay} />
       <div id="main" className="pb-24 md:pb-0">
         {children}
       </div>
-      <SiteFooter />
+      <SiteFooter note={layout?.pages.footer.note} showReplay={showReplay} />
       <BottomNav />
     </div>
   );

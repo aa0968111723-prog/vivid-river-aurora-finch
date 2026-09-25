@@ -7,6 +7,7 @@ export const SITE = {
   instagramUrl: "https://www.instagram.com/tku_zc",
   instagramHandle: "@tku_zc",
   instagramDmUrl: "https://ig.me/m/tku_zc",
+  facebookUrl: "https://www.facebook.com/tkuLeaderZen/",
   campus: "淡江大學（淡水校園）",
   garden: "淡大覺軒花園",
 } as const;

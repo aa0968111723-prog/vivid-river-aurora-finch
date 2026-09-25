@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
 import type { StaffRole } from "@/lib/types";
+import { mergeLayout, HOME_BLOCK_IDS, type SiteLayout } from "@/lib/site-layout";
 import { mapEvent, mapFaq, mapIg, mapStory, type EventRow } from "./map";
 
 const EVENT_SELECT = `
@@ -73,7 +74,7 @@ export const getAdminDashboard = createServerFn({ method: "GET" })
       `select ${EVENT_SELECT}
        from events e
        join event_categories c on c.id = e.category_id
-       where e.deleted_at is null
+       where e.deleted_at is null and e.is_demo = false
        order by e.starts_at desc`,
     );
     const mapped = events.map(mapEvent);
@@ -115,7 +116,7 @@ export const listAdminEvents = createServerFn({ method: "GET" })
       `select ${EVENT_SELECT}
        from events e
        join event_categories c on c.id = e.category_id
-       where e.deleted_at is null
+       where e.deleted_at is null and e.is_demo = false
        order by e.starts_at desc`,
     );
     return rows.map(mapEvent);
@@ -132,7 +133,7 @@ export const getAdminEvent = createServerFn({ method: "GET" })
       `select ${EVENT_SELECT}
        from events e
        join event_categories c on c.id = e.category_id
-       where e.id = $1 and e.deleted_at is null
+       where e.id = $1 and e.deleted_at is null and e.is_demo = false
        limit 1`,
       [data.id],
     );
@@ -286,7 +287,7 @@ export const listAdminStories = createServerFn({ method: "GET" })
     }>(
       `select id, slug, quote, body, display_name, role_label, photo_url,
               joined_label, related_event_id, instagram_url, is_demo
-       from stories where deleted_at is null order by sort_order asc`,
+       from stories where deleted_at is null and is_demo = false order by sort_order asc`,
     );
     return rows.map(mapStory);
   });
@@ -492,6 +493,79 @@ export const saveSettings = createServerFn({ method: "POST" })
           visible: data.announcementVisible,
         }),
       ],
+    );
+    return { ok: true };
+  });
+
+const lineSchema = z.object({
+  text: z.string().max(80),
+  sub: z.string().max(80),
+});
+
+const hrefSchema = z
+  .string()
+  .max(200)
+  .refine((value) => value.startsWith("/") || value.startsWith("https://"), "連結需為站內路徑或 https");
+
+const layoutSchema = z.object({
+  intro: z.object({
+    mode: z.enum(["on", "skip", "off"]),
+    showTurtle: z.boolean(),
+    lines: z.array(lineSchema).length(6),
+  }),
+  hero: z.object({
+    title: z.string().max(80),
+    subtitle: z.string().max(120),
+    ctaPrimary: z.string().max(24),
+    ctaPrimaryHref: hrefSchema,
+    ctaSecondary: z.string().max(24),
+    ctaSecondaryHref: hrefSchema,
+    image: hrefSchema,
+  }),
+  blocks: z
+    .array(
+      z.object({
+        id: z.enum(HOME_BLOCK_IDS),
+        visible: z.boolean(),
+        title: z.string().max(80),
+        subtitle: z.string().max(120),
+      }),
+    )
+    .length(HOME_BLOCK_IDS.length),
+  pages: z.object({
+    about: z.object({
+      title: z.string().max(40),
+      p1: z.string().max(400),
+      p2: z.string().max(400),
+      p3: z.string().max(400),
+      official: z.string().max(240),
+    }),
+    firstTime: z.object({
+      title: z.string().max(40),
+      lead: z.string().max(200),
+      cards: z.array(z.object({ title: z.string().max(40), body: z.string().max(120) })).length(4),
+    }),
+    join: z.object({
+      title: z.string().max(40),
+      lead: z.string().max(200),
+      steps: z.array(z.object({ title: z.string().max(40), body: z.string().max(160) })).length(3),
+    }),
+    footer: z.object({ note: z.string().max(300) }),
+  }),
+});
+
+export const saveLayout = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(layoutSchema)
+  .handler(async ({ context, data }) => {
+    await requireStaff(context.userId, "editor");
+    const layout: SiteLayout = mergeLayout(data);
+    const { getSql } = await import("@/lib/db");
+    const sql = await getSql();
+    await sql.query(
+      `insert into site_settings (key, value, updated_at) values ('layout', $1::jsonb, now())
+       on conflict (key) do update set value = excluded.value, updated_at = now()`,
+      [JSON.stringify(layout)],
     );
     return { ok: true };
   });

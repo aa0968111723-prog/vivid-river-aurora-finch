@@ -7,14 +7,17 @@ import type { EventRecord } from "@/lib/types";
 
 export function RegisterCta({ event }: { event: EventRecord }) {
   const remaining = formatRemaining(event.capacity, event.registeredCount);
-  const ended = event.computedStatus === "ended" || event.computedStatus === "full";
+  const ended = event.computedStatus === "ended";
+  const full = event.computedStatus === "full";
   const closed = event.registrationMode === "closed";
 
-  if (ended) {
+  if (ended || full) {
     return (
       <div className="rounded-xl border border-line bg-paper p-5">
-        <p className="font-medium">這一場已經結束或額滿了</p>
-        <p className="mt-1 text-sm text-mist">可以看看別場，或去 IG 看下一波。</p>
+        <p className="font-medium">{ended ? "這一場已經結束" : "名額已滿"}</p>
+        <p className="mt-1 text-sm text-mist">
+          {ended ? "下一場看活動頁，或追 IG @tku_zc。" : "可以看看其他場次，或追 IG @tku_zc。"}
+        </p>
         <Button asChild className="mt-4" variant="outline">
           <a href="/events">其他活動</a>
         </Button>

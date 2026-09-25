@@ -56,7 +56,12 @@ export function formatEventTime(iso: string) {
 }
 
 export function formatEventRange(startsAt: string, endsAt: string) {
-  return `${formatEventDate(startsAt)} ${formatEventTime(startsAt)}–${formatEventTime(endsAt)}`;
+  const start = formatEventTime(startsAt);
+  const end = formatEventTime(endsAt);
+  if (start === "00:00" && (end === "23:59" || end === "00:00")) {
+    return formatEventDate(startsAt);
+  }
+  return `${formatEventDate(startsAt)} ${start}–${end}`;
 }
 
 export function formatRemaining(capacity: number | null, registered: number | null) {
