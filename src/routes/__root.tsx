@@ -45,7 +45,7 @@ export const Route = createRootRoute({
 
 function RootDocument() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const layout = Route.useLoaderData();
+  const chrome = Route.useLoaderData();
   const bare = pathname.startsWith("/admin") || pathname.startsWith("/login");
   return (
     <html lang="zh-Hant-TW" suppressHydrationWarning>
@@ -62,7 +62,7 @@ function RootDocument() {
         <PreviewHostBridge />
         <AuthProvider>
           {bare ? <Outlet /> : (
-            <SiteShell layout={layout}>
+            <SiteShell chrome={chrome}>
               <Outlet />
             </SiteShell>
           )}

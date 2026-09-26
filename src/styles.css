@@ -89,6 +89,26 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  .zen-rise {
+    animation: zen-rise 520ms var(--ease-out) both;
+  }
+
+  .zen-editor,
+  .zen-editor > div {
+    height: 100%;
+  }
+}
+
+@keyframes zen-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @keyframes turtle-float {
@@ -399,7 +419,8 @@ html[data-zen-skip="1"] [aria-label="底部"] {
   .reveal,
   .zen-figure,
   .zen-chevron,
-  .zen-line {
+  .zen-line,
+  .zen-rise {
     animation: none !important;
     transition: none !important;
   }

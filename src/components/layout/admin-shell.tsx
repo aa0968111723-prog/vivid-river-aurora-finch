@@ -56,7 +56,7 @@ export function AdminShell({
           })}
         </nav>
       </header>
-      <div className="mx-auto max-w-6xl px-4 py-6">{children}</div>
+      <div className={pathname.startsWith("/admin/layout") ? "h-[calc(100dvh-7.5rem)]" : "mx-auto max-w-6xl px-4 py-6"}>{children}</div>
     </div>
   );
 }
