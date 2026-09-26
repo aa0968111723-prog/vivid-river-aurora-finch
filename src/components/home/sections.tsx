@@ -6,11 +6,7 @@ import { FaqList } from "@/components/faq-list";
 import { SITE, withUtm } from "@/lib/site";
 import type { Announcement, EventRecord, FaqRecord, InstagramPost, StoryRecord } from "@/lib/types";
 import type { HomeBlock } from "@/lib/site-layout";
-
-const BRAND_PHOTOS = [
-  { src: "/images/tricolor-light.jpg", alt: "三色光" },
-  { src: "/images/hero-garden.jpg", alt: "覺軒花園" },
-];
+import { REAL_PHOTOS, REAL_POSTERS } from "@/lib/real-media";
 
 function InLink({
   href,
@@ -159,19 +155,35 @@ export function WhatWeDo({ title, subtitle }: { title: string; subtitle: string 
 }
 
 export function PhotoRibbon({ title, subtitle }: { title: string; subtitle: string }) {
+  const heading = title.trim() || "社團自己的照片";
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 md:px-6">
       {subtitle ? <p className="text-sm font-medium tracking-wide text-leaf">{subtitle}</p> : null}
-      {title ? <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight">{title}</h2> : null}
-      <p className="mt-3 text-xs text-mist">三色光、覺軒花園是社團意象，不是活動現場照。</p>
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        {BRAND_PHOTOS.map((image) => (
+      <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight">{heading}</h2>
+      <p className="mt-3 max-w-xl text-sm text-mist">
+        現場照來自社團雲端。文宣是 IG 上公開過的圖。不是生成圖，也不是這一週的課表。
+      </p>
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        {REAL_PHOTOS.map((image) => (
           <figure key={image.src} className="overflow-hidden rounded-xl">
             <img src={image.src} alt={image.alt} className="aspect-[4/3] w-full object-cover" />
-            <figcaption className="mt-2 text-xs text-mist">{image.alt}</figcaption>
+            <figcaption className="mt-2 text-xs text-mist">{image.caption}</figcaption>
           </figure>
         ))}
       </div>
+      <div className="mt-8 flex gap-3 overflow-x-auto pb-2">
+        {REAL_POSTERS.map((image) => (
+          <figure key={image.src} className="w-40 shrink-0 md:w-48">
+            <img src={image.src} alt={image.alt} className="w-full rounded-xl border border-line bg-paper" />
+            <figcaption className="mt-2 text-xs text-mist">{image.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <p className="mt-4 text-sm">
+        <Link to="/gallery" className="text-leaf">
+          全部在活動回顧
+        </Link>
+      </p>
     </section>
   );
 }
@@ -195,6 +207,7 @@ export function InstagramStrip({
           {title || SITE.instagramHandle}
         </a>
       </h2>
+      <p className="mt-3 max-w-xl text-sm text-mist">點進貼文看完整圖。這裡的縮圖是 IG 給的預覽，有時會裁到字。</p>
       {ok && posts.length ? (
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           {posts.map((post) => (

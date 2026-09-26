@@ -27,7 +27,7 @@ function JoinPage() {
   return (
     <main>
       <section className="relative isolate overflow-hidden">
-        <img src="/images/campus-dusk.jpg" alt="" className="absolute inset-0 size-full object-cover" />
+        <img src="/images/photos/final-gathering.jpg" alt="" className="absolute inset-0 size-full object-cover object-center" />
         <div className="absolute inset-0 bg-ink/45" />
         <div className="relative mx-auto max-w-3xl px-5 py-24 text-center">
           <h1 className="font-display text-4xl font-semibold tracking-tight text-raised">{page.title}</h1>

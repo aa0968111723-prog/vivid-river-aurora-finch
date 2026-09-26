@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#F3EEE4" },
     ],
     links: [
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/png", href: "/images/club-mark.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: FONT },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },

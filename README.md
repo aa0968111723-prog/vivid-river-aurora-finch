@@ -73,7 +73,8 @@ migrations          schema。0003 是會被 0004 清掉的 demo；上線內容�
 `migrations/0001_auth.sql` Better Auth  
 `migrations/0002_schema.sql` 活動、故事、FAQ、IG、素材、設定、分析  
 `migrations/0003_seed.sql` 開發用 demo（`is_demo = true`）  
-`migrations/0004_real_content.sql` 清掉 demo，只留下已核對的 FAQ、兩則 IG、三場已結束回顧
+`migrations/0004_real_content.sql` 清掉 demo，只留下已核對的 FAQ、兩則 IG、三場已結束回顧  
+`migrations/0005_real_images.sql` 把這兩則 IG 的真實縮圖接到活動封面，並修正 3/18 的貼文連結。時間 19:00–21:30 來自社團自己的 IG 文案。報名維持關閉。
 
 前台查詢一律 `is_demo = false`。沒有活動、故事或 IG 時顯示空狀態，不補假卡、假人名、假名額。
 
@@ -83,14 +84,16 @@ migrations          schema。0003 是會被 0004 清掉的 demo；上線內容�
 - 2026-03-11 靜定，跳出內耗黑洞／工學大樓 E310
 - 2026-03-18 領袖禪-專注的力量／宮燈 H117
 
-IG 只收這兩則：<https://www.instagram.com/p/DVGrfkAk02g/>、<https://www.instagram.com/p/DV5AccUEaW-/>
+IG 只收這兩則：<https://www.instagram.com/p/DVGrfkAk02g/>（3/4 與 3/11）、<https://www.instagram.com/p/DV5AccUEaW-/>（3/18）。縮圖是貼文本身的圖，放在 `public/images/ig/`。
+
+文宣是從社團已公開的 IG 截圖裁出來的，個人 Line 與舊報名 QR 已從圖上拿掉。IG 縮圖是平台給的預覽，字有時被裁掉，所以只放在 IG 區塊，不拿來當活動封面。
 
 ## 幹部上線後要補
 
-- 本學期已確認的活動（日期、教室、報名連結）
-- 真實活動照片（不要把生成圖當成現場照）
-- 本人同意公開的社員故事
+- 本學期已確認、還沒貼上網站的新活動（日期、教室、報名連結）
+- 本人同意公開、且願意具名的社員故事
 - 社費金額（確認前不要寫）
+- 更多現場照時，仍不要把生成圖、內部申請表或名冊放上前台
 
 ## Admin
 

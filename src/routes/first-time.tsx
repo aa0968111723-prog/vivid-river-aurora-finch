@@ -35,7 +35,7 @@ function FirstTime() {
               <Link to="/events">看看最近活動</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="bg-raised/90">
-              <Link to="/join">想加入的話</Link>
+              <Link to="/join">我想要加入</Link>
             </Button>
           </div>
         </div>

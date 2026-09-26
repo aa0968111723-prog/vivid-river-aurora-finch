@@ -76,7 +76,7 @@ const BLOCK_COPY: Record<HomeBlockId, Pick<HomeBlock, "visible" | "title" | "sub
     title: "不是課堂，比較像生活",
     subtitle: "我們平常都在做什麼？",
   },
-  photos: { visible: true, title: "", subtitle: "" },
+  photos: { visible: true, title: "社團自己的照片", subtitle: "現場與文宣" },
   ig: { visible: true, title: "@tku_zc", subtitle: "Instagram" },
   stories: {
     visible: true,

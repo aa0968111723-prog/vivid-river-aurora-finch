@@ -167,6 +167,19 @@ export function mapFaq(row: {
   };
 }
 
+function clubImageUrl(url: string | null): string | null {
+  if (!url) return null;
+  if (
+    url.startsWith("/images/ig/") ||
+    url.startsWith("/images/posters/") ||
+    url.startsWith("/images/photos/")
+  ) {
+    return url;
+  }
+  if (url.startsWith("/images/")) return null;
+  return url;
+}
+
 export function mapIg(row: {
   id: string;
   post_url: string;
@@ -179,8 +192,7 @@ export function mapIg(row: {
   return {
     id: row.id,
     postUrl: row.post_url,
-    thumbnailUrl:
-      row.thumbnail_url && !row.thumbnail_url.startsWith("/images/") ? row.thumbnail_url : null,
+    thumbnailUrl: clubImageUrl(row.thumbnail_url),
     caption: row.caption,
     postType: row.post_type,
     publishedOn: asIsoOrNull(row.published_on),

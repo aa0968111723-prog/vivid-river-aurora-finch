@@ -30,22 +30,23 @@ export function EventCard({
         featured ? "min-w-[280px]" : "",
       )}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-paper">
-        {event.coverImage ? (
+      {event.coverImage ? (
+        <div className="relative aspect-[4/3] overflow-hidden bg-paper">
           <img
             src={event.coverImage}
             alt=""
-            className="size-full object-cover transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-[1.03]"
+            className="size-full object-contain"
             loading="lazy"
           />
-        ) : null}
-        <div className="absolute left-3 top-3 flex gap-1.5">
-          <Badge tone={toneMap[event.computedStatus]}>
-            {STATUS_LABELS[event.computedStatus]}
-          </Badge>
+          <div className="absolute left-3 top-3 flex gap-1.5">
+            <Badge tone={toneMap[event.computedStatus]}>{STATUS_LABELS[event.computedStatus]}</Badge>
+          </div>
         </div>
-      </div>
+      ) : null}
       <div className="flex flex-1 flex-col gap-2 p-4">
+        {event.coverImage ? null : (
+          <Badge tone={toneMap[event.computedStatus]}>{STATUS_LABELS[event.computedStatus]}</Badge>
+        )}
         <p className="text-xs font-medium tracking-wide text-leaf">
           {CATEGORY_LABELS[event.categoryId] ?? event.categoryName}
         </p>

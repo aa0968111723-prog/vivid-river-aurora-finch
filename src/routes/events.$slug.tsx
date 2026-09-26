@@ -55,15 +55,14 @@ function EventDetail() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="relative min-h-[46vh] overflow-hidden md:min-h-[56vh]">
-        {event.coverImage ? (
-          <img src={event.coverImage} alt="" className="absolute inset-0 size-full object-cover" />
-        ) : (
-          <div className="absolute inset-0 bg-paper" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-canvas via-canvas/20 to-ink/25" />
-      </div>
-      <div className="mx-auto grid max-w-6xl gap-8 px-5 pb-16 md:grid-cols-[1.2fr_0.8fr] md:px-6 md:-mt-24">
+      {event.coverImage ? (
+        <div className="bg-paper">
+          <img src={event.coverImage} alt="" className="mx-auto max-h-[52vh] w-full object-contain" />
+        </div>
+      ) : null}
+      <div
+        className={`mx-auto grid max-w-6xl gap-8 px-5 pb-16 md:grid-cols-[1.2fr_0.8fr] md:px-6 ${event.coverImage ? "md:-mt-8" : "pt-10"}`}
+      >
         <div className="relative rounded-xl border border-line bg-raised p-5 shadow-soft md:p-8">
           <div className="flex flex-wrap items-center gap-2">
             <EventStatusBadge status={event.computedStatus} />
@@ -159,7 +158,9 @@ function EventDetail() {
       </div>
       {related.length ? (
         <section className="mx-auto max-w-6xl px-5 pb-16 md:px-6">
-          <h2 className="font-display text-2xl font-semibold tracking-tight">下一場可以去</h2>
+          <h2 className="font-display text-2xl font-semibold tracking-tight">
+            {event.computedStatus === "ended" ? "其他已結束的場次" : "下一場可以去"}
+          </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <EventCard key={item.id} event={item} />
