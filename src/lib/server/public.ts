@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { publicCatalog } from "@/lib/pages/catalog";
+import { catalogMedia, type MediaSource } from "@/lib/real-media";
 import type { Announcement, SiteClubSettings } from "@/lib/types";
-import { mergeLayout, type SiteLayout } from "@/lib/site-layout";
 import {
   mapAsset,
   mapEvent,
@@ -33,7 +34,7 @@ export const getPublishedEvents = createServerFn({ method: "GET" }).handler(
        where e.status = 'published' and e.deleted_at is null and e.is_demo = false
        order by e.starts_at asc`,
     );
-    return rows.map(mapEvent);
+    return rows.map((row) => ({ ...mapEvent(row), canvaUrl: null }));
   },
 );
 
@@ -50,7 +51,7 @@ export const getEventBySlug = createServerFn({ method: "GET" })
        limit 1`,
       [data.slug],
     );
-    const event = rows[0] ? mapEvent(rows[0]) : null;
+    const event = rows[0] ? { ...mapEvent(rows[0]), canvaUrl: null } : null;
     if (!event) return null;
     const assets = await sql.query<{
       id: string;
@@ -79,7 +80,7 @@ export const getEventBySlug = createServerFn({ method: "GET" })
     return {
       event,
       assets: assets.map(mapEventAsset),
-      related: related.map(mapEvent),
+      related: related.map((row) => ({ ...mapEvent(row), canvaUrl: null })),
     };
   });
 
@@ -186,26 +187,18 @@ export const getFeaturedInstagram = createServerFn({ method: "GET" }).handler(
 );
 
 export const getPublicLayout = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const { getSql } = await import("@/lib/db");
-    const sql = await getSql();
-    const rows = await sql.query<{ value: unknown }>(
-      `select value from site_settings where key = 'layout' limit 1`,
-    );
-    let raw: unknown = rows[0]?.value ?? null;
-    if (typeof raw === "string") {
-      try {
-        raw = JSON.parse(raw);
-      } catch {
-        raw = null;
-      }
-    }
-    const layout: SiteLayout = mergeLayout(raw);
-    return layout;
-  } catch {
-    return mergeLayout(null);
-  }
+  const { readPublicSite } = await import("./pages");
+  const site = await readPublicSite();
+  return site.chrome;
 });
+
+export const getPublishedPage = createServerFn({ method: "GET" })
+  .validator(z.object({ pageKey: z.enum(["home", "events", "eventDetail", "firstTime", "about", "stories", "gallery", "join", "header", "footer"]) }))
+  .handler(async ({ data }) => {
+    const { readPublicSite } = await import("./pages");
+    const site = await readPublicSite();
+    return { page: site.pages[data.pageKey], chrome: site.chrome };
+  });
 
 export const getSiteMeta = createServerFn({ method: "GET" }).handler(async () => {
   const { getSql } = await import("@/lib/db");
@@ -233,18 +226,18 @@ export const getSiteMeta = createServerFn({ method: "GET" }).handler(async () =>
 });
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const [events, stories, faq, ig, meta, layout] = await Promise.all([
+  const [events, stories, faq, ig, meta, site] = await Promise.all([
     getPublishedEvents(),
     getPublishedStories(),
     getPublishedFaq(),
     getFeaturedInstagram(),
     getSiteMeta(),
-    getPublicLayout(),
+    import("./pages").then((mod) => mod.readPublicSite()),
   ]);
   const now = Date.now();
   const upcoming = events.filter((e) => Date.parse(e.endsAt) >= now).slice(0, 6);
   const past = events.filter((e) => Date.parse(e.endsAt) < now).slice(-6).reverse();
-  return { events, upcoming, past, stories, faq, ig, meta, layout };
+  return { events, upcoming, past, stories, faq, ig, meta, page: site.pages.home, chrome: site.chrome };
 });
 
 export const getGalleryData = createServerFn({ method: "GET" }).handler(
@@ -262,8 +255,8 @@ export const getGalleryData = createServerFn({ method: "GET" }).handler(
       event_id: string | null;
       tags: string | null;
     }>(
-      `select id, title, url, preview_url, asset_type, canva_url, drive_url, event_id, tags
-       from assets order by created_at desc`,
+      `select id, title, url, preview_url, asset_type, null::text as canva_url, null::text as drive_url, event_id, tags
+       from assets where published_at is not null order by created_at desc`,
     );
     const eventAssets = await sql.query<{
       id: string;
@@ -291,6 +284,47 @@ export const getGalleryData = createServerFn({ method: "GET" }).handler(
     };
   },
 );
+
+export const getMediaCatalog = createServerFn({ method: "GET" }).handler(async () => {
+  const { getSql } = await import("@/lib/db");
+  const sql = await getSql();
+  const assets = await sql.query<{
+    id: string;
+    title: string | null;
+    url: string;
+    preview_url: string | null;
+    asset_type: string;
+  }>(
+    `select id, title, url, preview_url, asset_type
+     from assets where published_at is not null order by created_at desc`,
+  );
+  const rows: MediaSource[] = assets.map((row) => ({
+    id: row.id,
+    url: row.url,
+    previewUrl: row.preview_url,
+    title: row.title,
+    assetType: row.asset_type,
+  }));
+  return catalogMedia(rows);
+});
+
+export const loadPublicCatalog = createServerFn({ method: "GET" }).handler(async () => {
+  const [events, stories, faq, ig, media] = await Promise.all([
+    getPublishedEvents(),
+    getPublishedStories(),
+    getPublishedFaq(),
+    getFeaturedInstagram(),
+    getMediaCatalog(),
+  ]);
+  return publicCatalog({
+    events,
+    stories,
+    faq,
+    instagram: ig.posts,
+    photos: media.photos,
+    posters: media.posters,
+  });
+});
 
 const trackSchema = z.object({
   eventName: z.string().max(80),

@@ -3,31 +3,35 @@ import { Link } from "@tanstack/react-router";
 import { EventCard } from "@/components/events/event-card";
 import { Button } from "@/components/ui/button";
 import { FaqList } from "@/components/faq-list";
+import { anchorMode } from "@/lib/pages/links";
 import { SITE, withUtm } from "@/lib/site";
 import type { Announcement, EventRecord, FaqRecord, InstagramPost, StoryRecord } from "@/lib/types";
 import type { HomeBlock } from "@/lib/site-layout";
-import { REAL_PHOTOS, REAL_POSTERS } from "@/lib/real-media";
+import { REAL_PHOTOS, REAL_POSTERS, type ClubMedia } from "@/lib/real-media";
 
 function InLink({
   href,
   className,
   children,
+  target,
 }: {
   href: string;
   className?: string;
   children: ReactNode;
+  target?: "self" | "blank";
 }) {
-  if (href.startsWith("https://")) {
+  const mode = anchorMode(href, target);
+  if (mode === "route") {
     return (
-      <a href={href} className={className} target="_blank" rel="noreferrer">
+      <Link to={href as "/"} className={className}>
         {children}
-      </a>
+      </Link>
     );
   }
   return (
-    <Link to={href as "/"} className={className}>
+    <a href={href} className={className} target={mode === "blank" ? "_blank" : undefined} rel={mode === "blank" ? "noreferrer" : undefined}>
       {children}
-    </Link>
+    </a>
   );
 }
 
@@ -39,8 +43,10 @@ export function HomeLead({
     subtitle: string;
     ctaPrimary: string;
     ctaPrimaryHref: string;
+    ctaPrimaryTarget?: "self" | "blank";
     ctaSecondary: string;
     ctaSecondaryHref: string;
+    ctaSecondaryTarget?: "self" | "blank";
     image: string;
   };
 }) {
@@ -53,10 +59,10 @@ export function HomeLead({
         <p className="mt-4 max-w-lg text-raised/90">{hero.subtitle}</p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild>
-            <InLink href={hero.ctaPrimaryHref}>{hero.ctaPrimary}</InLink>
+            <InLink href={hero.ctaPrimaryHref} target={hero.ctaPrimaryTarget}>{hero.ctaPrimary}</InLink>
           </Button>
           <Button asChild variant="outline" className="bg-raised/90">
-            <InLink href={hero.ctaSecondaryHref}>{hero.ctaSecondary}</InLink>
+            <InLink href={hero.ctaSecondaryHref} target={hero.ctaSecondaryTarget}>{hero.ctaSecondary}</InLink>
           </Button>
         </div>
       </div>
@@ -154,7 +160,17 @@ export function WhatWeDo({ title, subtitle }: { title: string; subtitle: string 
   );
 }
 
-export function PhotoRibbon({ title, subtitle }: { title: string; subtitle: string }) {
+export function PhotoRibbon({
+  title,
+  subtitle,
+  photos = REAL_PHOTOS,
+  posters = REAL_POSTERS,
+}: {
+  title: string;
+  subtitle: string;
+  photos?: ClubMedia[];
+  posters?: ClubMedia[];
+}) {
   const heading = title.trim() || "社團自己的照片";
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 md:px-6">
@@ -164,21 +180,23 @@ export function PhotoRibbon({ title, subtitle }: { title: string; subtitle: stri
         現場照來自社團雲端。文宣是 IG 上公開過的圖。不是生成圖，也不是這一週的課表。
       </p>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {REAL_PHOTOS.map((image) => (
+        {photos.map((image) => (
           <figure key={image.src} className="overflow-hidden rounded-xl">
             <img src={image.src} alt={image.alt} className="aspect-[4/3] w-full object-cover" />
             <figcaption className="mt-2 text-xs text-mist">{image.caption}</figcaption>
           </figure>
         ))}
       </div>
-      <div className="mt-8 flex gap-3 overflow-x-auto pb-2">
-        {REAL_POSTERS.map((image) => (
-          <figure key={image.src} className="w-40 shrink-0 md:w-48">
-            <img src={image.src} alt={image.alt} className="w-full rounded-xl border border-line bg-paper" />
-            <figcaption className="mt-2 text-xs text-mist">{image.caption}</figcaption>
-          </figure>
-        ))}
-      </div>
+      {posters.length ? (
+        <div className="mt-8 flex gap-3 overflow-x-auto pb-2">
+          {posters.map((image) => (
+            <figure key={image.src} className="w-40 shrink-0 md:w-48">
+              <img src={image.src} alt={image.alt} className="w-full rounded-xl border border-line bg-paper" />
+              <figcaption className="mt-2 text-xs text-mist">{image.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+      ) : null}
       <p className="mt-4 text-sm">
         <Link to="/gallery" className="text-leaf">
           全部在活動回顧
@@ -291,21 +309,42 @@ export function FaqTeaser({
   );
 }
 
-export function JoinBand({ title, subtitle }: { title: string; subtitle: string }) {
+export function JoinBand({
+  title,
+  subtitle,
+  buttons = [],
+}: {
+  title: string;
+  subtitle: string;
+  buttons?: { label: string; href: string; style?: "primary" | "outline" | "coral" | "ghost"; target?: "self" | "blank" }[];
+}) {
+  const actions = buttons.length
+    ? buttons
+    : [
+        { label: "私訊「想參加」", href: withUtm(SITE.instagramDmUrl, { medium: "home", campaign: "dm" }), style: "coral" as const, target: "blank" as const },
+        { label: "加入方式", href: "/join", style: "outline" as const, target: "self" as const },
+      ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 md:px-6">
       <div className="rounded-2xl bg-night px-6 py-12 text-center text-raised md:px-12">
         <h2 className="font-display text-3xl font-semibold tracking-tight">{title}</h2>
         {subtitle ? <p className="mx-auto mt-3 max-w-lg text-raised/80">{subtitle}</p> : null}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button asChild variant="coral">
-            <a href={withUtm(SITE.instagramDmUrl, { medium: "home", campaign: "dm" })} target="_blank" rel="noreferrer">
-              私訊「想參加」
-            </a>
-          </Button>
-          <Button asChild variant="outline" className="bg-transparent text-raised">
-            <Link to="/join">加入方式</Link>
-          </Button>
+          {actions.map((button) => {
+            const mode = anchorMode(button.href, button.target);
+            const variant = button.style === "primary" || !button.style ? "default" : button.style;
+            return (
+              <Button key={`${button.label}-${button.href}`} asChild variant={variant} className={variant === "outline" ? "bg-transparent text-raised" : undefined}>
+                {mode === "route" ? (
+                  <Link to={button.href as "/join"}>{button.label}</Link>
+                ) : (
+                  <a href={button.href} target={mode === "blank" ? "_blank" : undefined} rel={mode === "blank" ? "noreferrer" : undefined}>
+                    {button.label}
+                  </a>
+                )}
+              </Button>
+            );
+          })}
         </div>
       </div>
     </section>

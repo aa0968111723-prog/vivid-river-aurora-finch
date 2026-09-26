@@ -3,6 +3,7 @@ import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
 import type { StaffRole } from "@/lib/types";
 import { mergeLayout, HOME_BLOCK_IDS, type SiteLayout } from "@/lib/site-layout";
+import { roleAllows, type PageAction } from "@/lib/pages/roles";
 import { mapEvent, mapFaq, mapIg, mapStory, type EventRow } from "./map";
 
 const EVENT_SELECT = `
@@ -39,7 +40,7 @@ async function requireStaff(userId: string, min: StaffRole = "viewer") {
       `insert into profiles (user_id, role, display_name) values ($1, 'admin', '第一位管理者')`,
       [userId],
     );
-    return { role: "admin" as StaffRole, userId };
+    return { role: "admin" as StaffRole, userId, displayName: "第一位管理者" };
   }
   const rows = await sql.query<{ role: StaffRole; display_name: string | null }>(
     `select role, display_name from profiles where user_id = $1`,
@@ -51,10 +52,16 @@ async function requireStaff(userId: string, min: StaffRole = "viewer") {
       [userId],
     );
     if (min !== "viewer") throw new ForbiddenError();
-    return { role: "viewer" as StaffRole, userId };
+    return { role: "viewer" as StaffRole, userId, displayName: null as string | null };
   }
   if (ROLE_RANK[rows[0].role] < ROLE_RANK[min]) throw new ForbiddenError();
   return { role: rows[0].role, userId, displayName: rows[0].display_name };
+}
+
+export async function authorizeStaff(userId: string, action: PageAction) {
+  const staff = await requireStaff(userId, "viewer");
+  if (!roleAllows(staff.role, action)) throw new ForbiddenError();
+  return staff;
 }
 
 export const getAdminContext = createServerFn({ method: "GET" })

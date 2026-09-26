@@ -20,6 +20,8 @@ import {
 import { renderInstallPage } from "./grok-pwa-plugin.mjs";
 
 const TEMPLATE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const isolatedCwd = mkdtempSync(join(tmpdir(), "grok-pwa-cwd-"));
+process.chdir(isolatedCwd);
 
 test("injects before </head>", () => {
   const out = injectGrokPwaHead("<html><head><title>x</title></head><body></body></html>");
